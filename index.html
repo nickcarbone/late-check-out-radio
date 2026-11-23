@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Late Check-Out</title>
+<meta name="description" content="Imagined hotel rooms around the world, each played by a real radio station.">
+<meta name="theme-color" content="#14110d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Late Check-Out">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2314110d'/%3E%3Cpath d='M20 46V26a12 12 0 0 1 24 0v20' fill='none' stroke='%23c3a26b' stroke-width='2.5'/%3E%3Ccircle cx='32' cy='30' r='2.5' fill='%23c3a26b'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%2314110d'/%3E%3Cpath d='M58 128V74a32 32 0 0 1 64 0v54' fill='none' stroke='%23c3a26b' stroke-width='5'/%3E%3Ccircle cx='90' cy='84' r='6' fill='%23c3a26b'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14110d; --ink2:#1b1712; --ink3:#241f19;
+  --paper:#efe6d6; --soft:#cdbfa9; --muted:#958973;
+  --brass:#c3a26b; --brass2:#e0c48f;
+  --line:rgba(239,230,214,.11); --line2:rgba(239,230,214,.2);
+  --serif:"Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --sans:"Jost", "Avenir Next", "Helvetica Neue", sans-serif;
+  --ease:cubic-bezier(.2,.7,.1,1);
+  --bar:84px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--ink);color:var(--paper);-webkit-text-size-adjust:100%}
+body{font-family:var(--sans);font-weight:300;font-size:16px;line-height:1.6;letter-spacing:.01em;min-height:100vh;padding-bottom:calc(var(--bar) + env(safe-area-inset-bottom));overflow-x:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+::selection{background:var(--brass);color:var(--ink)}
+.wrap{max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,56px)}
+.eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);font-weight:400}
+.serif{font-family:var(--serif)}
+.rule{height:1px;background:var(--line);border:0}
+
+/* ---------- Header ---------- */
+header.top{position:sticky;top:0;z-index:30;background:rgba(20,17,13,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding-top:env(safe-area-inset-top)}
+header.top::after{content:"";position:absolute;left:0;right:0;top:100%;height:28px;background:linear-gradient(rgba(20,17,13,.94),rgba(20,17,13,0));pointer-events:none}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;height:76px;gap:24px}
+.mark{display:flex;align-items:baseline;gap:12px;text-decoration:none}
+.mark b{font-family:var(--serif);font-weight:400;font-size:26px;letter-spacing:.02em}
+.mark i{font-family:var(--serif);font-style:italic;color:var(--brass);font-size:15px}
+nav.main{display:flex;gap:clamp(16px,3vw,40px)}
+nav.main a{font-size:11px;letter-spacing:.26em;text-transform:uppercase;text-decoration:none;color:var(--soft);padding:6px 0;border-bottom:1px solid transparent;transition:color .3s,border-color .3s}
+nav.main a:hover{color:var(--paper);border-color:var(--brass)}
+.yourtime{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.yourtime span{color:var(--soft)}
+
+/* ---------- Plates (visual treatment) ---------- */
+.plate{position:relative;overflow:hidden;background:var(--a,#2a2119);isolation:isolate;--light:.6}
+.plate::before{content:"";position:absolute;inset:-20%;z-index:-1;
+  background:radial-gradient(60% 55% at 68% 28%,var(--b,#e0c48f),transparent 70%);
+  opacity:calc(.12 + var(--light)*.5);transition:opacity 2s var(--ease)}
+.plate::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;opacity:.09;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.plate .shade{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(10,8,6,0) 35%,rgba(10,8,6,.55) 100%)}
+.plate svg.motif{position:absolute;inset:0;width:100%;height:100%;z-index:1;color:var(--b);opacity:calc(.32 + var(--light)*.28);transition:opacity 2s}
+.plate svg.motif *{vector-effect:non-scaling-stroke}
+
+/* ---------- Front desk ---------- */
+section{scroll-margin-top:80px}
+.desk{padding:clamp(20px,4vw,48px) 0 clamp(48px,7vw,96px)}
+.desk-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:clamp(28px,5vw,72px);align-items:center}
+.desk .plate{aspect-ratio:4/3.1;border-radius:2px;cursor:pointer}
+.desk .plate .corner{position:absolute;z-index:3;left:24px;bottom:20px;right:24px;display:flex;justify-content:space-between;align-items:flex-end;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:rgba(239,230,214,.8)}
+.desk .plate .corner .clock{font-family:var(--serif);font-size:42px;letter-spacing:0;text-transform:none;line-height:1;color:var(--paper)}
+.desk h1{font-family:var(--serif);font-weight:400;font-size:clamp(44px,6vw,84px);line-height:.98;letter-spacing:-.01em;margin:18px 0 22px}
+.desk h1 em{display:block;font-style:italic;color:var(--brass2);font-size:.5em;margin-top:12px;letter-spacing:0}
+.desk p.blurb{font-family:var(--serif);font-size:clamp(19px,1.6vw,22px);line-height:1.5;color:var(--soft);max-width:34em}
+.meta{display:flex;flex-wrap:wrap;gap:8px 28px;margin:26px 0 34px;font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.meta b{font-weight:400;color:var(--soft)}
+.btn{display:inline-flex;align-items:center;gap:14px;padding:16px 28px;border:1px solid var(--brass);color:var(--paper);font-size:11px;letter-spacing:.3em;text-transform:uppercase;transition:background .4s var(--ease),color .4s}
+.btn:hover{background:var(--brass);color:var(--ink)}
+.btn svg{width:12px;height:12px}
+.also{margin-top:clamp(48px,6vw,80px)}
+.also-row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:18px}
+
+/* ---------- Cards ---------- */
+.card{display:block;text-align:left;width:100%}
+.card .plate{aspect-ratio:3/2;border-radius:2px;transition:transform 1.2s var(--ease)}
+.card:hover .plate{transform:scale(1.015)}
+.card .plate .tag{position:absolute;z-index:3;top:14px;left:14px;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:rgba(239,230,214,.75)}
+.card .plate .tm{position:absolute;z-index:3;bottom:12px;right:14px;font-family:var(--serif);font-size:22px;color:var(--paper)}
+.card .cap{padding:14px 2px 0}
+.card .cap .city{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+.card .cap h3{font-family:var(--serif);font-weight:400;font-size:25px;line-height:1.15;margin:4px 0 4px}
+.card .cap .st{font-size:12.5px;color:var(--muted)}
+.card.closed .plate{filter:saturate(.55) brightness(.75)}
+.card.current .cap h3::after{content:"  ·  seated";font-family:var(--sans);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--brass);vertical-align:middle}
+.open{color:var(--brass2)}
+.dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--brass);margin-right:8px;vertical-align:middle;box-shadow:0 0 0 3px rgba(195,162,107,.15)}
+.dot.off{background:transparent;border:1px solid var(--muted);box-shadow:none}
+
+/* ---------- Rooms ---------- */
+.block{padding:clamp(56px,8vw,110px) 0 0}
+.block-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:34px}
+.block-head h2{font-family:var(--serif);font-weight:400;font-size:clamp(36px,4.4vw,58px);line-height:1}
+.block-head h2 i{color:var(--brass2)}
+.block-head p{max-width:30em;color:var(--muted);font-size:14.5px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px 30px;border-bottom:1px solid var(--line);margin-bottom:34px}
+.tabs button{font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);padding:12px 0 14px;border-bottom:1px solid transparent;margin-bottom:-1px;transition:color .3s,border-color .3s}
+.tabs button sup{font-size:9px;letter-spacing:.05em;margin-left:5px;color:var(--muted)}
+.tabs button[aria-selected="true"]{color:var(--paper);border-color:var(--brass)}
+.tabs button:hover{color:var(--paper)}
+.typeline{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--soft);margin:-14px 0 30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:40px 24px}
+
+/* ---------- Directory ---------- */
+.dir{columns:2 420px;column-gap:64px}
+.region{break-inside:avoid;margin-bottom:44px}
+.region h4{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--brass);font-weight:400;padding-bottom:12px;border-bottom:1px solid var(--line2)}
+.row{display:grid;grid-template-columns:1fr auto;gap:2px 16px;width:100%;text-align:left;padding:14px 0;border-bottom:1px solid var(--line);transition:padding .4s var(--ease)}
+.row:hover{padding-left:8px}
+.row .l1{font-family:var(--serif);font-size:21px;line-height:1.2}
+.row .l1 small{font-family:var(--sans);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-left:10px}
+.row .l2{font-size:12.5px;color:var(--muted)}
+.row .r1{font-family:var(--serif);font-size:21px;text-align:right}
+.row .r2{font-size:11.5px;color:var(--muted);text-align:right;white-space:nowrap}
+
+footer{margin-top:clamp(70px,10vw,130px);padding:48px 0 60px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+footer .cols{display:grid;grid-template-columns:1.2fr 1fr;gap:40px}
+footer p+p{margin-top:12px}
+footer .mark b{font-size:22px}
+
+/* ---------- Player bar ---------- */
+.player{position:fixed;z-index:50;left:0;right:0;bottom:0;padding-bottom:env(safe-area-inset-bottom);background:rgba(20,17,13,.9);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);border-top:1px solid var(--line)}
+.player .wrap{height:var(--bar);display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:20px}
+.np{display:flex;align-items:center;gap:16px;min-width:0;text-align:left}
+.np .plate{width:52px;height:52px;flex:none;border-radius:2px}
+.np .t{min-width:0}
+.np .t b{display:block;font-family:var(--serif);font-weight:400;font-size:20px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np .t span{display:block;font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np .t span.warn{color:#d7a98a}
+.ctrls{display:flex;align-items:center;gap:10px}
+.ib{width:40px;height:40px;display:grid;place-items:center;border-radius:50%;color:var(--soft);transition:color .3s,background .3s}
+.ib:hover{color:var(--paper);background:rgba(239,230,214,.06)}
+.ib svg{width:18px;height:18px}
+.ib.play{width:52px;height:52px;border:1px solid var(--brass);color:var(--paper)}
+.ib.play:hover{background:var(--brass);color:var(--ink)}
+.ib.play svg{width:16px;height:16px}
+.ib[disabled]{opacity:.3;pointer-events:none}
+.right{display:flex;justify-content:flex-end;align-items:center;gap:8px}
+.vol{-webkit-appearance:none;appearance:none;width:110px;height:2px;background:linear-gradient(90deg,var(--brass) var(--v,80%),var(--line2) var(--v,80%));outline:none;cursor:pointer}
+.vol::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--paper);border:0}
+.vol::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--paper);border:0}
+.srcbtn{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:8px 12px;border:1px solid var(--line2);border-radius:20px;transition:color .3s,border-color .3s;white-space:nowrap}
+.srcbtn:hover{color:var(--paper);border-color:var(--brass)}
+.eq{display:inline-flex;gap:2px;align-items:flex-end;height:10px;margin-right:8px;vertical-align:baseline}
+.eq i{width:2px;background:var(--brass);height:3px}
+.playing .eq i{animation:eq 1.4s ease-in-out infinite}
+.playing .eq i:nth-child(2){animation-delay:-.5s}.playing .eq i:nth-child(3){animation-delay:-.9s}
+@keyframes eq{0%,100%{height:3px}50%{height:10px}}
+
+/* ---------- Room view ---------- */
+.room{position:fixed;inset:0;z-index:40;display:flex;opacity:0;visibility:hidden;transition:opacity .9s var(--ease),visibility 0s .9s}
+.room.show{opacity:1;visibility:visible;transition:opacity .9s var(--ease)}
+.room>.plate{position:absolute;inset:0}
+.room>.plate svg.motif{opacity:calc(.22 + var(--light)*.2);-webkit-mask-image:linear-gradient(90deg,transparent 20%,#000 62%);mask-image:linear-gradient(90deg,transparent 20%,#000 62%)}
+.room>.plate .shade{background:linear-gradient(90deg,rgba(10,8,6,.82) 0%,rgba(10,8,6,.35) 55%,rgba(10,8,6,.15) 100%),linear-gradient(0deg,rgba(10,8,6,.7),rgba(10,8,6,0) 50%)}
+.room .drift{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(40% 35% at 30% 70%,var(--b),transparent 70%);opacity:.12;animation:drift 38s ease-in-out infinite alternate;mix-blend-mode:screen}
+@keyframes drift{0%{transform:translate(0,0) scale(1)}100%{transform:translate(18%,-14%) scale(1.25)}}
+.room-in{position:relative;z-index:3;width:100%;display:flex;flex-direction:column;justify-content:space-between;padding:calc(28px + env(safe-area-inset-top)) clamp(22px,5vw,72px) calc(var(--bar) + 36px + env(safe-area-inset-bottom))}
+.room-top{display:flex;justify-content:space-between;align-items:center;transition:opacity 1.2s}
+.back{display:inline-flex;align-items:center;gap:12px;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--soft)}
+.back:hover{color:var(--paper)}
+.back svg{width:14px;height:14px}
+.room-top .tools{display:flex;gap:6px}
+.room-main{max-width:720px}
+.room-main .where{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--soft)}
+.room-main .clock{font-family:var(--serif);font-size:clamp(56px,8vw,112px);line-height:1;margin:14px 0 6px;font-weight:400;letter-spacing:-.01em}
+.room-main h2{font-family:var(--serif);font-weight:400;font-style:italic;font-size:clamp(34px,4.6vw,60px);line-height:1.05;color:var(--brass2)}
+.room-detail{transition:opacity 1.2s,transform 1.2s var(--ease)}
+.room-main p.blurb{font-family:var(--serif);font-size:clamp(19px,1.7vw,23px);line-height:1.5;color:var(--soft);margin:24px 0 0;max-width:32em}
+.room-main .mood{margin-top:18px;font-size:12px;letter-spacing:.08em;color:var(--muted)}
+.notice{margin-top:22px;padding:14px 18px;border-left:1px solid var(--brass);background:rgba(20,17,13,.45);font-size:14px;color:var(--soft);max-width:34em}
+.notice:empty{display:none}
+.sources{margin-top:30px;display:flex;flex-direction:column;gap:2px;max-width:520px}
+.sources .eyebrow{margin-bottom:8px}
+.src{display:grid;grid-template-columns:18px 1fr auto;gap:12px;align-items:center;text-align:left;padding:10px 0;border-top:1px solid var(--line)}
+.src:last-child{border-bottom:1px solid var(--line)}
+.src .rad{width:9px;height:9px;border-radius:50%;border:1px solid var(--muted)}
+.src.on .rad{background:var(--brass);border-color:var(--brass)}
+.src .n{font-size:14px;color:var(--paper)}
+.src .n small{display:block;font-size:11.5px;color:var(--muted)}
+.src .s{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.src .s.bad{color:#d7a98a}
+.src a{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line2)}
+.room.ambient .room-detail,.room.ambient .room-top{opacity:0}
+.room.ambient{cursor:none}
+.room.ambient .room-main h2{opacity:.85}
+
+/* ---------- Responsive ---------- */
+@media (max-width:980px){
+  .desk-grid{grid-template-columns:1fr}
+  .also-row{grid-template-columns:repeat(2,1fr)}
+  footer .cols{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  :root{--bar:76px}
+  nav.main{display:none}
+  .player .wrap{grid-template-columns:minmax(0,1fr) auto;gap:10px}
+  .right .vol,.right .srcbtn{display:none}
+  .np .plate{width:44px;height:44px}
+  .grid{grid-template-columns:1fr 1fr;gap:28px 14px}
+  .card .cap h3{font-size:20px}
+  .card .plate .tm{font-size:18px}
+  .yourtime{display:none}
+  .room>.plate svg.motif{opacity:.14;-webkit-mask-image:none;mask-image:none}
+}
+@media (max-width:420px){.grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.noVol .vol{display:none}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="mark" href="#desk"><b>Late Check-Out</b><i>rooms around the world</i></a>
+    <nav class="main" aria-label="Sections">
+      <a href="#desk">Front Desk</a><a href="#rooms">The Rooms</a><a href="#directory">Directory</a>
+    </nav>
+    <div class="yourtime">Your time <span id="yourTime">--:--</span></div>
+  </div>
+</header>
+
+<main>
+  <section id="desk" class="desk">
+    <div class="wrap">
+      <div class="desk-grid">
+        <div id="featPlate"></div>
+        <div>
+          <div class="eyebrow" id="featEyebrow">Open now</div>
+          <h1 id="featTitle"></h1>
+          <p class="blurb" id="featBlurb"></p>
+          <div class="meta" id="featMeta"></div>
+          <button class="btn" id="featGo"><svg viewBox="0 0 12 12"><path d="M2 1l9 5-9 5z" fill="currentColor"/></svg>Take a seat</button>
+        </div>
+      </div>
+      <div class="also">
+        <div class="eyebrow">Also open at this hour</div>
+        <div class="also-row" id="alsoRow"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="rooms" class="block">
+    <div class="wrap">
+      <div class="block-head">
+        <h2>The <i>Rooms</i></h2>
+        <p>Each room keeps the hours of its own city. When one is closed you are still welcome to sit in, because the music doesn't stop.</p>
+      </div>
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <p class="typeline" id="typeLine"></p>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <section id="directory" class="block">
+    <div class="wrap">
+      <div class="block-head">
+        <h2>The <i>Directory</i></h2>
+        <p>Every room by city, with the local time and whether it is open.</p>
+      </div>
+      <div class="dir" id="dir"></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap cols">
+      <div>
+        <a class="mark" href="#desk"><b>Late Check-Out</b></a>
+        <p style="margin-top:14px">Every room here is imagined. The radio is real: each room is played by a professional broadcaster, credited by name and streamed from that station's own servers. No room is affiliated with any hotel, bar or station.</p>
+      </div>
+      <div>
+        <p>If a station stops answering, the room says so and moves to its alternative. Streams belong to their broadcasters and can change without notice.</p>
+        <p>Keyboard: <b>space</b> to pause or resume, <b>M</b> to mute, <b>Esc</b> to leave a room.</p>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<!-- Room view -->
+<div class="room" id="room" aria-hidden="true">
+  <div class="plate" id="roomPlate"></div>
+  <div class="drift" id="roomDrift"></div>
+  <div class="room-in">
+    <div class="room-top">
+      <button class="back" id="roomBack"><svg viewBox="0 0 14 14"><path d="M9 2L4 7l5 5" fill="none" stroke="currentColor"/></svg>Back to the lobby</button>
+      <div class="tools">
+        <button class="ib" id="wakeBtn" title="Keep the screen awake" aria-label="Keep the screen awake" hidden><svg viewBox="0 0 18 18"><circle cx="9" cy="9" r="3.2" fill="none" stroke="currentColor"/><path d="M9 1.5v2M9 14.5v2M1.5 9h2M14.5 9h2M3.7 3.7l1.4 1.4M12.9 12.9l1.4 1.4M3.7 14.3l1.4-1.4M12.9 5.1l1.4-1.4" stroke="currentColor"/></svg></button>
+        <button class="ib" id="fsBtn" title="Full screen" aria-label="Full screen"><svg viewBox="0 0 18 18"><path d="M2 6V2h4M12 2h4v4M16 12v4h-4M6 16H2v-4" fill="none" stroke="currentColor"/></svg></button>
+      </div>
+    </div>
+    <div class="room-main">
+      <div class="where" id="roomWhere"></div>
+      <div class="clock" id="roomClock"></div>
+      <h2 id="roomName"></h2>
+      <div class="room-detail">
+        <p class="blurb" id="roomBlurb"></p>
+        <div class="mood" id="roomMood"></div>
+        <div class="notice" id="roomNotice"></div>
+        <div class="sources" id="roomSources"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Player -->
+<div class="player" id="player">
+  <div class="wrap">
+    <button class="np" id="npOpen" aria-label="Open the current room">
+      <div class="plate" id="npPlate"></div>
+      <div class="t"><b id="npTitle">Choose a room</b><span id="npSub">Nothing playing yet</span></div>
+    </button>
+    <div class="ctrls">
+      <button class="ib play" id="playBtn" aria-label="Play" disabled><svg viewBox="0 0 16 16" id="playIcon"><path d="M4 2l10 6-10 6z" fill="currentColor"/></svg></button>
+    </div>
+    <div class="right">
+      <button class="srcbtn" id="srcBtn" hidden>Other station</button>
+      <button class="ib" id="muteBtn" aria-label="Mute"><svg viewBox="0 0 18 18" id="muteIcon"></svg></button>
+      <input class="vol" id="vol" type="range" min="0" max="100" value="80" aria-label="Volume">
+    </div>
+  </div>
+</div>
+<span class="sr" aria-live="polite" id="live"></span>
+
+<script>
+/* =========================================================
+   LATE CHECK-OUT
+   Imagined rooms, real radio. Every stream below was tested
+   on 23 Nov 2026. Hours are local to each room's city.
+   ========================================================= */
+
+const HLS_JS = "https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js";
+
+const TYPES = {
+  lobby:   {label:"Lobby",    line:"Grand rooms for arriving, waiting and watching the city come and go."},
+  bar:     {label:"Bar",      line:"Low light, a good pour and music to match the hour."},
+  rooftop: {label:"Rooftop",  line:"High above the street, at their best from dusk."},
+  cafe:    {label:"Café",     line:"Mornings and long afternoons with the papers."},
+  poolside:{label:"Poolside", line:"Sun, shade and the afternoon slipping by."},
+  seaside: {label:"Seaside",  line:"Rooms at the edge of the water."}
+};
+const REGIONS = ["Europe","The Americas","Africa","Asia & Pacific"];
+
+/* h(open, close) in local hours; null = always open */
+const h = (o,c) => [Math.round(o*60), Math.round(c*60)];
+
+const ROOMS = [
+/* ---------------- LOBBY ---------------- */
+{ id:"vienna-hall", type:"lobby", name:"The Winter Hall", city:"Vienna", country:"Austria", region:"Europe", tz:"Europe/Vienna",
+  hours:null, a:"#3a2a1e", b:"#e8c48a", mood:"Hushed and gilded",
+  blurb:"A lobby built for arrivals by carriage, with marble underfoot and chandeliers lit by four in the afternoon. The porter remembers names. The music comes from the city's own classical station.",
+  sources:[
+    {name:"Radio Klassik Stephansdom", place:"Vienna", url:"https://radioklassikstephansdom.ice.infomaniak.ch/radioklassikstephansdom.mp3", home:"https://radioklassik.at"},
+    {name:"Ö1 · ORF", place:"Vienna", url:"https://orf-live.ors-shoutcast.at/oe1-q2a", home:"https://oe1.orf.at"} ]},
+{ id:"zurich-hall", type:"lobby", name:"The Lakeside Hall", city:"Zürich", country:"Switzerland", region:"Europe", tz:"Europe/Zurich",
+  hours:null, a:"#1f2a33", b:"#cfd8dc", mood:"Composed and bright",
+  blurb:"Tall windows give onto the lake as it turns silver at dusk. The newspapers are ironed and nobody raises their voice. Radio Swiss Classic keeps the room at an even temperature.",
+  sources:[
+    {name:"Radio Swiss Classic", place:"SRG SSR, Switzerland", url:"https://stream.srg-ssr.ch/m/rsc_de/mp3_128", home:"https://www.radioswissclassic.ch"},
+    {name:"Radio Swiss Jazz", place:"SRG SSR, Switzerland", url:"https://stream.srg-ssr.ch/srgssr/rsj/aac/192", home:"https://www.radioswissjazz.ch"} ]},
+{ id:"paris-salon", type:"lobby", name:"Le Grand Salon", city:"Paris", country:"France", region:"Europe", tz:"Europe/Paris",
+  hours:null, a:"#2e2420", b:"#e6b89c", mood:"Gracious and soft-lit",
+  blurb:"Velvet banquettes beneath a glass roof, and tea served until the light goes. Radio Classique, broadcasting from Paris, supplies the repertoire.",
+  sources:[
+    {name:"Radio Classique", place:"Paris", url:"https://radioclassique.ice.infomaniak.ch/radioclassique-high.mp3", home:"https://www.radioclassique.fr"},
+    {name:"FIP", place:"Radio France, Paris", url:"https://icecast.radiofrance.fr/fip-hifi.aac", home:"https://www.radiofrance.fr/fip"} ]},
+{ id:"london-gallery", type:"lobby", name:"The Long Gallery", city:"London", country:"United Kingdom", region:"Europe", tz:"Europe/London",
+  hours:null, a:"#1e2522", b:"#c9b48a", mood:"Clubbable and quiet",
+  blurb:"A Mayfair corridor of armchairs and good lamps, hung with portraits of people nobody can identify. Classic FM's Calm channel plays at the volume of a well-kept secret.",
+  sources:[
+    {name:"Classic FM Calm", place:"Global, London", url:"https://media-ssl.musicradio.com/ClassicFMCalmMP3", home:"https://www.classicfm.com"},
+    {name:"Smooth Chill", place:"Global, London", url:"https://media-ssl.musicradio.com/ChillMP3", home:"https://www.smoothradio.com/chill"} ]},
+{ id:"montreal-salon", type:"lobby", name:"Salon des Neiges", city:"Montréal", country:"Canada", region:"The Americas", tz:"America/Toronto",
+  hours:null, a:"#22262e", b:"#dfe6ee", mood:"Warm against the cold",
+  blurb:"Snow banks up against the windows while the fire does its work. ICI Musique Classique, Radio-Canada's classical service, plays from Montréal.",
+  sources:[
+    {name:"ICI Musique Classique", place:"Radio-Canada, Montréal", url:"https://playerservices.streamtheworld.com/api/livestream-redirect/ICI_MusiqueClassique_SRC.mp3", home:"https://ici.radio-canada.ca/ohdio/musique"} ]},
+{ id:"ny-mezz", type:"lobby", name:"The Mezzanine", city:"New York", country:"United States", region:"The Americas", tz:"America/New_York",
+  hours:null, a:"#262019", b:"#d9b77e", mood:"Grand and watchful",
+  blurb:"Above the revolving doors in Midtown, a balcony of club chairs from which to watch the city check in. WQXR, New York's classical station, plays throughout.",
+  sources:[
+    {name:"WQXR 105.9", place:"New York", url:"https://stream.wqxr.org/wqxr-web", home:"https://www.wqxr.org"} ]},
+
+/* ---------------- BAR ---------------- */
+{ id:"ny-lowroom", type:"bar", name:"The Low Room", city:"New York", country:"United States", region:"The Americas", tz:"America/New_York",
+  hours:h(17,2), a:"#1a1412", b:"#c0703f", mood:"Dark and intimate",
+  blurb:"Down a half-flight from the lobby, with oxblood leather, a short cocktail list and a bartender who never rushes you. WBGO sends the jazz over from Newark, across the river.",
+  sources:[
+    {name:"WBGO Jazz 88.3", place:"Newark, New Jersey", url:"https://ais-sa8.cdnstream1.com/3629_128.mp3", home:"https://www.wbgo.org"},
+    {name:"Jazz24", place:"KNKX, Seattle", url:"https://knkx-live-a.edge.audiocdn.com/6285_128k", home:"https://www.jazz24.org"} ]},
+{ id:"paris-bar", type:"bar", name:"Bar d'Hiver", city:"Paris", country:"France", region:"Europe", tz:"Europe/Paris",
+  hours:h(18,2), a:"#24161a", b:"#c98a6a", mood:"Polished and late",
+  blurb:"Mahogany panelling, and a pianist's stool left empty after midnight. TSF Jazz, broadcasting from Paris, takes over where the piano stops.",
+  sources:[
+    {name:"TSF Jazz", place:"Paris", url:"https://tsfjazz.ice.infomaniak.ch/tsfjazz-high.mp3", home:"https://www.tsfjazz.com"},
+    {name:"FIP Jazz", place:"Radio France, Paris", url:"https://icecast.radiofrance.fr/fipjazz-hifi.aac", home:"https://www.radiofrance.fr/fip"} ]},
+{ id:"lyon-piano", type:"bar", name:"Le Piano Bar", city:"Lyon", country:"France", region:"Europe", tz:"Europe/Paris",
+  hours:h(19,1), a:"#1c1714", b:"#d1a87a", mood:"Intimate and mellow",
+  blurb:"A small room off the lobby on the Presqu'île, with a lacquered piano and a barman who knows the standards. Jazz Radio's piano channel plays from Lyon.",
+  sources:[
+    {name:"Jazz Radio · Piano Jazz", place:"Lyon", url:"https://jzr-piano.ice.infomaniak.ch/jzr-piano.mp3", home:"https://www.jazzradio.fr"},
+    {name:"Jazz Radio", place:"Lyon", url:"https://jazzradio.ice.infomaniak.ch/jazzradio-high.mp3", home:"https://www.jazzradio.fr"} ]},
+{ id:"monaco-nocturne", type:"bar", name:"Bar Nocturne", city:"Monte Carlo", country:"Monaco", region:"Europe", tz:"Europe/Monaco",
+  hours:h(21,4), a:"#121826", b:"#8fa6d6", mood:"Glamorous and after-hours",
+  blurb:"Low tables face the harbour, where the yachts sit lit up and nobody seems to be aboard. Radio Monaco's Night Mood channel sets the tempo after dark.",
+  sources:[
+    {name:"Radio Monaco · Night Mood", place:"Monaco", url:"https://nightmood.ice.infomaniak.ch/nightmood-128.aac", home:"https://radio-monaco.com"},
+    {name:"Radio Monaco", place:"Monaco", url:"https://radiomonaco.ice.infomaniak.ch/radiomonaco-128.mp3", home:"https://radio-monaco.com"} ]},
+{ id:"milan-velluto", type:"bar", name:"Bar Velluto", city:"Milan", country:"Italy", region:"Europe", tz:"Europe/Rome",
+  hours:h(18,1), a:"#231417", b:"#b5606a", mood:"Sharp and sociable",
+  blurb:"Red velvet in Brera and a properly stirred Negroni, among people who dressed for the occasion. Musica Jazz Radio, from the Italian jazz magazine of the same name, supplies the soundtrack.",
+  sources:[
+    {name:"Musica Jazz Radio", place:"Italy", url:"https://ice16.fluidstream.net/mjr.mp3", home:"https://www.musicajazz.it/radio/"},
+    {name:"Radio Monte Carlo · VIP Lounge", place:"Milan", url:"https://icy.unitedradio.it/rmcweb020", home:"https://www.radiomontecarlo.net"} ]},
+{ id:"berlin-landwehr", type:"bar", name:"Bar Landwehr", city:"Berlin", country:"Germany", region:"Europe", tz:"Europe/Berlin",
+  hours:h(19,3), a:"#15181a", b:"#9fb3a8", mood:"Spare and nocturnal",
+  blurb:"A canal-side room in Kreuzberg, all concrete and candlelight, where the ice is taken seriously. Jazzradio 106.8 broadcasts from the city.",
+  sources:[
+    {name:"Jazzradio Berlin 106.8", place:"Berlin", url:"https://streaming.radio.co/s774887f7b/listen", home:"https://jazzradio.net"} ]},
+{ id:"cph-harbour", type:"bar", name:"The Harbour Bar", city:"Copenhagen", country:"Denmark", region:"Europe", tz:"Europe/Copenhagen",
+  hours:h(17,1), a:"#162027", b:"#a8c3cf", mood:"Snug and candlelit",
+  blurb:"Wool throws on oak benches, and the harbour slapping at the quay outside. DR P8 Jazz, the Danish broadcaster's jazz channel, plays from Copenhagen.",
+  sources:[
+    {name:"DR P8 Jazz", place:"Copenhagen", url:"https://live-icy.dr.dk/A/A22H.mp3", home:"https://www.dr.dk/lyd/p8jazz"} ]},
+{ id:"marrakech-andalou", type:"bar", name:"Salon Andalou", city:"Marrakech", country:"Morocco", region:"Africa", tz:"Africa/Casablanca",
+  hours:h(19,2), a:"#2b1511", b:"#d9874a", mood:"Lantern-lit and slow",
+  blurb:"Lanterns hang over a tiled courtyard and the cushions are deep enough to lose an evening in. Medina FM's Andalusian channel, broadcast from Casablanca, plays music with its roots in Moorish Spain.",
+  sources:[
+    {name:"Medina FM · Andalou", place:"Casablanca", url:"https://medinaandalou.ice.infomaniak.ch/medinaandalou-128.mp3", home:"https://medinafm.ma"},
+    {name:"Medina FM · Tarab", place:"Casablanca", url:"https://medinatarab.ice.infomaniak.ch/medinatarab-128.mp3", home:"https://medinafm.ma"} ]},
+{ id:"nola-courtyard", type:"bar", name:"The Courtyard", city:"New Orleans", country:"United States", region:"The Americas", tz:"America/Chicago",
+  hours:h(15,2), a:"#1d1a12", b:"#c9a25a", mood:"Humid and easy",
+  blurb:"Iron balconies in the French Quarter drip with ferns above a fountain nobody has managed to turn off. WWOZ, the city's jazz and heritage station, is the house band.",
+  sources:[
+    {name:"WWOZ 90.7", place:"New Orleans", url:"https://wwoz-sc.streamguys1.com/wwoz-hi.mp3", home:"https://www.wwoz.org"} ]},
+
+/* ---------------- ROOFTOP ---------------- */
+{ id:"hk-49", type:"rooftop", name:"Terrace Forty-Nine", city:"Hong Kong", country:"China", region:"Asia & Pacific", tz:"Asia/Hong_Kong",
+  hours:h(17,1), a:"#101a24", b:"#e0a46a", mood:"Lofty and glittering",
+  blurb:"Forty-nine floors above Central, with the harbour below and the Star Ferry crossing in the dark. RTHK Radio 4, Hong Kong's classical and fine arts channel, plays from the city.",
+  sources:[
+    {name:"RTHK Radio 4", place:"Hong Kong", url:"https://rthkradio4-live.akamaized.net/hls/live/2040080/radio4/master.m3u8", hls:true, home:"https://www.rthk.hk/radio/radio4"} ]},
+{ id:"cdmx-azotea", type:"rooftop", name:"La Azotea", city:"Mexico City", country:"Mexico", region:"The Americas", tz:"America/Mexico_City",
+  hours:h(17,0), a:"#2a1a14", b:"#e39a6c", mood:"Amber and convivial",
+  blurb:"Terracotta pots and jacarandas on a roof in Roma Norte, with mezcal poured slowly as the city turns amber. Horizonte 107.9, the public jazz station, plays with the news between sets.",
+  sources:[
+    {name:"Horizonte 107.9", place:"IMER, Mexico City", url:"https://s2.mexside.net/8014/stream", home:"https://www.imer.mx/horizonte/"},
+    {name:"Opus 94.5", place:"IMER, Mexico City", url:"https://s2.mexside.net/8016/stream", home:"https://www.imer.mx/opus/"} ]},
+{ id:"athens-terrace", type:"rooftop", name:"The Marble Terrace", city:"Athens", country:"Greece", region:"Europe", tz:"Europe/Athens",
+  hours:h(18,1), a:"#1f2124", b:"#e8d7b0", mood:"Balmy and ancient",
+  blurb:"Whitewashed parapets face the Acropolis as it lights up at dusk. Kosmos Jazz, a channel from the Greek public broadcaster ERT, plays across the terrace.",
+  sources:[
+    {name:"ERT Kosmos Jazz", place:"Athens", url:"https://radiostreaming.ert.gr/ert-webjazz", home:"https://www.ertecho.gr/radio/kosmos-jazz/"},
+    {name:"ERT Kosmos", place:"Athens", url:"https://radiostreaming.ert.gr/ert-kosmos", home:"https://www.ertecho.gr"} ]},
+{ id:"la-sunset", type:"rooftop", name:"The Sunset Roof", city:"Los Angeles", country:"United States", region:"The Americas", tz:"America/Los_Angeles",
+  hours:h(16,0), a:"#2a1d1c", b:"#f0a273", mood:"Golden and loose",
+  blurb:"A fire pit glows on the roof as the hills above Sunset Boulevard go pink. KCRW's Eclectic 24 streams from Santa Monica.",
+  sources:[
+    {name:"KCRW Eclectic 24", place:"Santa Monica", url:"https://streams.kcrw.com/e24_mp3", home:"https://www.kcrw.com"},
+    {name:"KJazz 88.1", place:"Long Beach", url:"https://streaming.live365.com/a49833", home:"https://www.kjazz.org"} ]},
+{ id:"paris-toit", type:"rooftop", name:"Le Toit", city:"Paris", country:"France", region:"Europe", tz:"Europe/Paris",
+  hours:h(18,2), a:"#1a1622", b:"#c58fb5", mood:"Lively and late",
+  blurb:"Zinc rooftops in every direction above Pigalle, and a crowd that arrives after the dinner hour. Radio Nova, the Paris station for groove and the unexpected, plays loud enough to talk over.",
+  sources:[
+    {name:"Radio Nova", place:"Paris", url:"https://novazz.ice.infomaniak.ch/novazz-128.mp3", home:"https://www.nova.fr"},
+    {name:"FIP Groove", place:"Radio France, Paris", url:"https://icecast.radiofrance.fr/fipgroove-hifi.aac", home:"https://www.radiofrance.fr/fip"} ]},
+
+/* ---------------- CAFÉ ---------------- */
+{ id:"vienna-zeitung", type:"cafe", name:"Café Zeitung", city:"Vienna", country:"Austria", region:"Europe", tz:"Europe/Vienna",
+  hours:h(7,22), a:"#2b2219", b:"#e2c79c", mood:"Studious and unhurried",
+  blurb:"Bentwood chairs, and a glass of water with every coffee. Ö1, Austria's cultural channel, brings the news on the hour and long stretches of music in between.",
+  sources:[
+    {name:"Ö1 · ORF", place:"Vienna", url:"https://orf-live.ors-shoutcast.at/oe1-q2a", home:"https://oe1.orf.at"},
+    {name:"Radio Klassik Stephansdom", place:"Vienna", url:"https://radioklassikstephansdom.ice.infomaniak.ch/radioklassikstephansdom.mp3", home:"https://radioklassik.at"} ]},
+{ id:"paris-matin", type:"cafe", name:"Café du Matin", city:"Paris", country:"France", region:"Europe", tz:"Europe/Paris",
+  hours:h(7,23), a:"#262019", b:"#e9cf9e", mood:"Bright and curious",
+  blurb:"A corner terrace with wicker chairs facing the street, open from the first croissant. FIP, Radio France's famously eclectic station, has been playing like this since 1971.",
+  sources:[
+    {name:"FIP", place:"Radio France, Paris", url:"https://icecast.radiofrance.fr/fip-hifi.aac", home:"https://www.radiofrance.fr/fip"},
+    {name:"FIP Monde", place:"Radio France, Paris", url:"https://icecast.radiofrance.fr/fipworld-hifi.aac", home:"https://www.radiofrance.fr/fip"} ]},
+{ id:"ba-pajaros", type:"cafe", name:"Café de los Pájaros", city:"Buenos Aires", country:"Argentina", region:"The Americas", tz:"America/Argentina/Buenos_Aires",
+  hours:h(8,1), a:"#25160f", b:"#d39663", mood:"Faded and romantic",
+  blurb:"High ceilings in San Telmo, waiters in waistcoats and a tango record turning somewhere at the back. La 2x4, the city's own tango station, broadcasts from Buenos Aires.",
+  sources:[
+    {name:"La 2x4 · FM 92.7", place:"Buenos Aires", url:"https://media.radios.ar:9270/", home:"https://buenosaires.gob.ar/la2x4"},
+    {name:"Radio Nacional Clásica", place:"Buenos Aires", url:"https://sa.mp3.icecast.magma.edge-access.net/sc_rad37", home:"https://www.radionacional.com.ar"} ]},
+{ id:"ams-koffie", type:"cafe", name:"De Koffiekamer", city:"Amsterdam", country:"Netherlands", region:"Europe", tz:"Europe/Amsterdam",
+  hours:h(8,20), a:"#1c2122", b:"#c7c0a5", mood:"Mellow and grey-lit",
+  blurb:"The front room of a canal house on the Prinsengracht, with tall windows and bicycles ticking past. Sublime Jazz, a channel from the Dutch station Sublime, keeps things smooth.",
+  sources:[
+    {name:"Sublime Jazz", place:"Netherlands", url:"https://stream.sublime.nl/web21_mp3", home:"https://www.sublime.nl"},
+    {name:"Sublime", place:"Netherlands", url:"https://playerservices.streamtheworld.com/api/livestream-redirect/SUBLIME.mp3", home:"https://www.sublime.nl"} ]},
+{ id:"sp-jardins", type:"cafe", name:"Café Jardins", city:"São Paulo", country:"Brazil", region:"The Americas", tz:"America/Sao_Paulo",
+  hours:h(7,21), a:"#18211a", b:"#b9c98a", mood:"Leafy and urbane",
+  blurb:"A shaded corner in Jardins where the espresso is strong and conversations run long. Rádio Eldorado, the São Paulo station of the Estadão newspaper group, plays throughout.",
+  sources:[
+    {name:"Rádio Eldorado", place:"São Paulo", url:"https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_ELDORADOAAC.aac", home:"https://www.estadao.com.br/eldorado/"},
+    {name:"Alpha MPB", place:"Alpha FM, São Paulo", url:"https://playerservices.streamtheworld.com/api/livestream-redirect/ALPHAMPBAAC.aac", home:"https://www.alphafm.com.br"} ]},
+{ id:"lisbon-azulejo", type:"cafe", name:"Café Azulejo", city:"Lisbon", country:"Portugal", region:"Europe", tz:"Europe/Lisbon",
+  hours:h(8,22), a:"#1a2230", b:"#e7d3a4", mood:"Sunlit and gentle",
+  blurb:"Blue-and-white tiles behind a marble counter in Príncipe Real, and pastéis still warm from the oven. Antena 2, Portugal's public classical station, plays from Lisbon.",
+  sources:[
+    {name:"Antena 2 · RTP", place:"Lisbon", url:"https://radiocast.rtp.pt/antena280a.mp3", home:"https://antena2.rtp.pt"},
+    {name:"Antena 2 Jazzin", place:"RTP, Lisbon", url:"https://streaming-live.rtp.pt/liveradio/antena2jazzin80a/playlist.m3u8", hls:true, home:"https://antena2.rtp.pt"} ]},
+
+/* ---------------- POOLSIDE ---------------- */
+{ id:"ps-desert", type:"poolside", name:"The Desert Pool", city:"Palm Springs", country:"United States", region:"The Americas", tz:"America/Los_Angeles",
+  hours:h(9,20), a:"#2b2520", b:"#f2c08a", mood:"Mid-century and sun-struck",
+  blurb:"Turquoise water beneath the San Jacinto mountains, which turn rose at about five. KJazz 88.1 broadcasts jazz from Long Beach.",
+  sources:[
+    {name:"KJazz 88.1", place:"Long Beach", url:"https://streaming.live365.com/a49833", home:"https://www.kjazz.org"},
+    {name:"KCRW Eclectic 24", place:"Santa Monica", url:"https://streams.kcrw.com/e24_mp3", home:"https://www.kcrw.com"} ]},
+{ id:"syd-baths", type:"poolside", name:"The Harbour Baths", city:"Sydney", country:"Australia", region:"Asia & Pacific", tz:"Australia/Sydney",
+  hours:h(7,19), a:"#122129", b:"#9fd0d8", mood:"Breezy and bright",
+  blurb:"A saltwater pool cut into the rocks, with the harbour ferries going about their business beyond. ABC Jazz, from the Australian Broadcasting Corporation, plays all day.",
+  sources:[
+    {name:"ABC Jazz", place:"ABC, Australia", url:"https://mediaserviceslive.akamaized.net/hls/live/2038319/abcjazz/index.m3u8", hls:true, home:"https://www.abc.net.au/jazz"},
+    {name:"Smooth 95.3", place:"Sydney", url:"https://playerservices.streamtheworld.com/api/livestream-redirect/SMOOTH953_AAC128.aac", home:"https://www.smooth.com.au"} ]},
+{ id:"ibiza-blanca", type:"poolside", name:"Piscina Blanca", city:"Ibiza", country:"Spain", region:"Europe", tz:"Europe/Madrid",
+  hours:h(10,20), a:"#1f2627", b:"#f1e6cf", mood:"Drowsy and white",
+  blurb:"Whitewashed walls around a pool where lunch quietly becomes the afternoon. Café del Mar's Calm channel plays from the island.",
+  sources:[
+    {name:"Café del Mar · Calm", place:"Ibiza", url:"https://streamer.radio.co/sb748f24ad/listen", home:"https://cafedelmar.com"},
+    {name:"Café del Mar · Channel 2", place:"Ibiza", url:"https://s4.radio.co/seeae9c220/listen", home:"https://cafedelmar.com"} ]},
+
+/* ---------------- SEASIDE ---------------- */
+{ id:"ibiza-poniente", type:"seaside", name:"Cala Poniente", city:"Ibiza", country:"Spain", region:"Europe", tz:"Europe/Madrid",
+  hours:h(12,2), a:"#2a1a1a", b:"#f29b6b", mood:"Golden and ceremonial",
+  blurb:"A west-facing cove where the whole beach turns to watch the sun go down. Café del Mar Radio, from the sunset bar in Sant Antoni, keeps the ritual going.",
+  sources:[
+    {name:"Café del Mar Radio", place:"Ibiza", url:"https://streams.radio.co/se1a320b47/listen", home:"https://cafedelmar.com"},
+    {name:"Café del Mar · Channel 2", place:"Ibiza", url:"https://s4.radio.co/seeae9c220/listen", home:"https://cafedelmar.com"} ]},
+{ id:"riviera-lido", type:"seaside", name:"Lido Levante", city:"Portofino", country:"Italy", region:"Europe", tz:"Europe/Rome",
+  hours:h(10,1), a:"#142430", b:"#e9c88f", mood:"Sleek and sunlit",
+  blurb:"Striped umbrellas in tidy rows on the Ligurian coast, above a sea as flat as glass. Radio Monte Carlo, the Italian network, plays from Milan.",
+  sources:[
+    {name:"Radio Monte Carlo", place:"Milan", url:"https://icy.unitedradio.it/RMC.aac", home:"https://www.radiomontecarlo.net"},
+    {name:"Radio Monte Carlo · VIP Lounge", place:"Milan", url:"https://icy.unitedradio.it/rmcweb020", home:"https://www.radiomontecarlo.net"} ]},
+{ id:"rio-quiosque", type:"seaside", name:"Quiosque Ipanema", city:"Rio de Janeiro", country:"Brazil", region:"The Americas", tz:"America/Sao_Paulo",
+  hours:h(8,0), a:"#13262a", b:"#f0c27a", mood:"Sandy and carefree",
+  blurb:"A beach kiosk near Posto 9, with the Dois Irmãos peaks at the far end of the sand. JB FM broadcasts from Rio de Janeiro.",
+  sources:[
+    {name:"JB FM 99.9", place:"Rio de Janeiro", url:"https://playerservices.streamtheworld.com/api/livestream-redirect/JBFMAAC.aac", home:"https://jb.fm"},
+    {name:"Rádio MEC", place:"EBC, Rio de Janeiro", url:"https://radiomec-stream.ebc.com.br/ebc/radiomec/playlist.m3u8", hls:true, home:"https://radios.ebc.com.br"} ]},
+{ id:"mykonos-sostis", type:"seaside", name:"Sostis Bay", city:"Mykonos", country:"Greece", region:"Europe", tz:"Europe/Athens",
+  hours:h(11,2), a:"#14202e", b:"#f2eee6", mood:"Windblown and barefoot",
+  blurb:"A barefoot beach bar on the quiet side of the island, with tamarisk shade and the meltemi in the canvas. ERT Kosmos, the Greek public broadcaster's world music station, plays from Athens.",
+  sources:[
+    {name:"ERT Kosmos", place:"Athens", url:"https://radiostreaming.ert.gr/ert-kosmos", home:"https://www.ertecho.gr"},
+    {name:"ERT Kosmos Jazz", place:"Athens", url:"https://radiostreaming.ert.gr/ert-webjazz", home:"https://www.ertecho.gr/radio/kosmos-jazz/"} ]},
+{ id:"cpt-campsbay", type:"seaside", name:"Camps Bay Terrace", city:"Cape Town", country:"South Africa", region:"Africa", tz:"Africa/Johannesburg",
+  hours:h(10,23), a:"#1b2224", b:"#e5b58c", mood:"Bracing and bright",
+  blurb:"A terrace beneath the Twelve Apostles, where the Atlantic arrives cold and the wine is local. Fine Music Radio, Cape Town's classical and jazz station, plays from the city.",
+  sources:[
+    {name:"Fine Music Radio 101.3", place:"Cape Town", url:"https://edge.iono.fm/xice/fmr_live_medium.mp3", home:"https://www.fmr.co.za"} ]}
+];
+
+/* ---------- Motifs (thin-line drawings per room type) ---------- */
+const S = 'fill="none" stroke="currentColor" stroke-width="1"';
+const MOTIF = {
+  lobby: `<svg class="motif" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    ${[40,120,200,280].map(x=>`<path ${S} d="M${x} 300V150a40 40 0 0 1 80 0v150"/><path ${S} opacity=".5" d="M${x+10} 300V152a30 30 0 0 1 60 0v148"/>`).join("")}
+    <path ${S} d="M200 0v52"/><ellipse ${S} cx="200" cy="64" rx="34" ry="8"/><ellipse ${S} opacity=".6" cx="200" cy="74" rx="22" ry="5"/>
+    ${[-30,-15,0,15,30].map(d=>`<path ${S} opacity=".5" d="M${200+d} 72v10"/><circle cx="${200+d}" cy="84" r="1.4" fill="currentColor"/>`).join("")}
+    <path ${S} opacity=".4" d="M0 268h400M0 276h400"/></svg>`,
+  bar: `<svg class="motif" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <path ${S} d="M0 214h400"/><path ${S} opacity=".45" d="M0 222h400M0 300v0"/>
+    <path ${S} d="M246 120h70l-35 34z"/><path ${S} d="M281 154v52M262 208h38"/>
+    <path ${S} opacity=".7" d="M120 150h28v56h-28z M134 150v-22 M128 128h12"/>
+    ${[0,1,2,3,4,5,6].map(i=>`<circle ${S} opacity="${.15+i*.06}" cx="${60+i*48}" cy="46" r="${10+i%3*4}"/>`).join("")}
+    <path ${S} opacity=".35" d="M0 242h400M0 262h400"/></svg>`,
+  rooftop: `<svg class="motif" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <path ${S} d="M0 230h20v-40h18v-58h22v58h14v-92h26v92h12v-30h20v-46h10v-34h4v34h10v46h18v76h16v-64h24v-40h20v40h12v64h16v-110h28v110h18v-48h22v48h20v-26h30"/>
+    <path ${S} opacity=".5" d="M0 252h400"/><path ${S} opacity=".35" d="M0 274h400"/>
+    ${[[52,38],[108,22],[168,60],[226,18],[288,44],[342,26],[372,70],[24,80]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.2" fill="currentColor"/>`).join("")}
+    <circle ${S} cx="330" cy="70" r="14" opacity=".6"/></svg>`,
+  cafe: `<svg class="motif" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <path ${S} d="M0 60h400"/>${Array.from({length:10},(_,i)=>`<path ${S} d="M${i*40} 60q20 26 40 0"/><path ${S} opacity=".4" d="M${i*40+20} 60v20"/>`).join("")}
+    <path ${S} d="M170 196h60v14a30 30 0 0 1-60 0z"/><path ${S} d="M230 202a10 10 0 0 1 0 20"/><path ${S} d="M150 244h100"/>
+    <path ${S} opacity=".55" d="M188 182c-6-10 6-14 0-24M200 182c-6-10 6-14 0-24M212 182c-6-10 6-14 0-24"/>
+    <path ${S} opacity=".35" d="M60 300v-60h6v60M334 300v-60h6v60M50 240h26M324 240h26"/></svg>`,
+  poolside: `<svg class="motif" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    ${[190,210,230,250,270,290].map((y,i)=>`<path ${S} opacity="${.75-i*.1}" d="M0 ${y}q25 -8 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0"/>`).join("")}
+    <path ${S} d="M60 170l60-40h60"/><path ${S} d="M84 154v16M150 130v40"/>
+    <path ${S} d="M318 180c4-50 2-90-6-120"/><path ${S} opacity=".8" d="M312 62c-30-6-50 6-60 22M312 62c-10-24-34-30-52-24M312 62c26-14 50-8 62 6M312 62c22 0 40 16 44 34M312 62c-18 10-30 30-30 50"/>
+    <circle ${S} cx="110" cy="58" r="22" opacity=".5"/></svg>`,
+  seaside: `<svg class="motif" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <path ${S} d="M0 168h400"/><path ${S} d="M140 168a60 60 0 0 1 120 0"/>
+    ${[0,1,2,3,4].map(i=>`<path ${S} opacity="${.55-i*.08}" d="M${120+i*8} ${180+i*10}h${160-i*16}"/>`).join("")}
+    ${[206,232,262,296].map((y,i)=>`<path ${S} opacity="${.5-i*.08}" d="M0 ${y}q50 -10 100 0t100 0t100 0t100 0"/>`).join("")}
+    <path ${S} opacity=".6" d="M330 120l14 -6 14 6M300 96l10 -4 10 4"/></svg>`
+};
+
+/* ---------- Helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem("lco:"+k); return v===null?d:JSON.parse(v); }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem("lco:"+k, JSON.stringify(v)); }catch(e){} }
+};
+const fmtCache = {};
+function nowMin(tz){
+  const f = fmtCache[tz] || (fmtCache[tz] = new Intl.DateTimeFormat("en-GB",{timeZone:tz,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}));
+  const p = f.formatToParts(new Date());
+  return (+p.find(x=>x.type==="hour").value % 24)*60 + (+p.find(x=>x.type==="minute").value);
+}
+const hhmm = m => String(Math.floor(m/60)%24).padStart(2,"0")+":"+String(m%60).padStart(2,"0");
+function isOpen(r){
+  if(!r.hours) return true;
+  const [o,c]=r.hours, n=nowMin(r.tz);
+  return o<c ? (n>=o && n<c) : (n>=o || n<c);
+}
+function phase(r){ // 0..1 progress through opening hours
+  if(!r.hours) return .5;
+  const [o,c]=r.hours, n=nowMin(r.tz), dur=((c-o)+1440)%1440||1440;
+  return (((n-o)+1440)%1440)/dur;
+}
+function statusText(r){
+  if(!r.hours) return "Open all hours";
+  return isOpen(r) ? "Open until "+hhmm(r.hours[1]) : "Closed · reopens "+hhmm(r.hours[0]);
+}
+function daylight(tz){ // 0 at night, 1 in early afternoon
+  const hr = nowMin(tz)/60;
+  return Math.max(0, Math.min(1, .5 + .62*Math.cos((hr-13.5)/12*Math.PI)));
+}
+function plate(r, extra=""){
+  return `<div class="plate" style="--a:${r.a};--b:${r.b};--light:${daylight(r.tz).toFixed(2)}">${MOTIF[r.type]}<div class="shade"></div>${extra}</div>`;
+}
+const byId = id => ROOMS.find(r=>r.id===id);
+const typeName = t => TYPES[t].label;
+
+/* ---------- Rendering ---------- */
+let currentTab = store.get("tab","bar");
+let featured = null;
+
+function pickFeatured(){
+  const open = ROOMS.filter(isOpen);
+  const pool = (open.length?open:ROOMS).map(r=>{
+    let s = Math.abs(phase(r)-.42);
+    if(!r.hours) s += .28; // lobbies are the fallback, not the headline
+    return {r,s};
+  }).sort((a,b)=>a.s-b.s);
+  const top = pool.slice(0, Math.min(5,pool.length));
+  const hour = Math.floor(Date.now()/3.6e6);
+  return {feat: top[hour % top.length].r, rest: pool.map(x=>x.r)};
+}
+
+function renderDesk(){
+  const {feat, rest} = pickFeatured();
+  featured = feat;
+  $("#featPlate").innerHTML = plate(feat, `<div class="corner"><span>${esc(feat.city)} · ${esc(typeName(feat.type))}</span><span class="clock">${hhmm(nowMin(feat.tz))}</span></div>`);
+  $("#featPlate .plate").onclick = () => enter(feat);
+  $("#featEyebrow").textContent = isOpen(feat) ? "Open now · " + feat.city + ", " + feat.country : "The house recommends · " + feat.city;
+  $("#featTitle").innerHTML = esc(feat.name) + `<em>${esc(feat.mood)}</em>`;
+  $("#featBlurb").textContent = feat.blurb;
+  const s0 = feat.sources[0];
+  $("#featMeta").innerHTML = `<span><b>${esc(statusText(feat))}</b></span><span>Music · <b>${esc(s0.name)}</b>, ${esc(s0.place)}</span>`;
+  const also = rest.filter(r=>r!==feat && r.city!==feat.city).filter((r,i,a)=>a.findIndex(x=>x.type===r.type)===i).slice(0,4);
+  $("#alsoRow").innerHTML = also.map(card).join("");
+  bindCards($("#alsoRow"));
+}
+
+function card(r){
+  const open = isOpen(r);
+  const cur = engine.room && engine.room.id===r.id;
+  return `<button class="card ${open?"":"closed"} ${cur?"current":""}" data-id="${r.id}">
+    ${plate(r, `<span class="tag">${esc(typeName(r.type))}</span><span class="tm">${hhmm(nowMin(r.tz))}</span>`)}
+    <div class="cap"><div class="city">${esc(r.city)}</div><h3>${esc(r.name)}</h3>
+    <div class="st"><span class="dot ${open?"":"off"}"></span>${esc(statusText(r))}</div></div></button>`;
+}
+function bindCards(root){ root.querySelectorAll(".card").forEach(el=>el.onclick=()=>enter(byId(el.dataset.id))); }
+
+function renderTabs(){
+  $("#tabs").innerHTML = Object.keys(TYPES).map(t=>{
+    const n = ROOMS.filter(r=>r.type===t).length;
+    return `<button role="tab" aria-selected="${t===currentTab}" data-t="${t}">${TYPES[t].label}<sup>${n}</sup></button>`;
+  }).join("");
+  $("#tabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{ currentTab=b.dataset.t; store.set("tab",currentTab); renderTabs(); renderGrid(); });
+}
+function renderGrid(){
+  $("#typeLine").textContent = TYPES[currentTab].line;
+  const list = ROOMS.filter(r=>r.type===currentTab).sort((a,b)=>(isOpen(b)-isOpen(a)) || a.city.localeCompare(b.city));
+  $("#grid").innerHTML = list.map(card).join("");
+  bindCards($("#grid"));
+}
+function renderDir(){
+  $("#dir").innerHTML = REGIONS.map(reg=>{
+    const list = ROOMS.filter(r=>r.region===reg).sort((a,b)=>a.city.localeCompare(b.city) || a.name.localeCompare(b.name));
+    if(!list.length) return "";
+    return `<div class="region"><h4>${esc(reg)}</h4>${list.map(r=>`
+      <button class="row" data-id="${r.id}">
+        <span class="l1">${esc(r.city)}<small>${esc(typeName(r.type))}</small></span>
+        <span class="r1">${hhmm(nowMin(r.tz))}</span>
+        <span class="l2">${esc(r.name)} · ${esc(r.sources[0].name)}</span>
+        <span class="r2"><span class="dot ${isOpen(r)?"":"off"}"></span>${esc(statusText(r))}</span>
+      </button>`).join("")}</div>`;
+  }).join("");
+  $("#dir").querySelectorAll(".row").forEach(el=>el.onclick=()=>enter(byId(el.dataset.id)));
+}
+function renderAll(){ renderDesk(); renderGrid(); renderDir(); }
+
+/* =========================================================
+   Audio engine: two elements for crossfading, hls.js loaded
+   only when a room needs it and the browser lacks native HLS.
+   ========================================================= */
+const probe = new Audio(); probe.volume = .5;
+const CAN_VOL = Math.abs(probe.volume-.5) < .01;   // iOS reports 1: volume is hardware-only there
+if(!CAN_VOL) document.body.classList.add("noVol");
+// Safari (and every iOS browser) plays HLS natively and keeps it running with the screen locked;
+// elsewhere native support is patchy, so hls.js handles it.
+const NATIVE_HLS = !!probe.canPlayType("application/vnd.apple.mpegurl") && /Apple/.test(navigator.vendor||"");
+let hlsLoading = null;
+function loadHls(){
+  if(window.Hls) return Promise.resolve();
+  if(!hlsLoading) hlsLoading = new Promise((res,rej)=>{ const s=document.createElement("script"); s.src=HLS_JS; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
+  return hlsLoading;
+}
+
+const engine = {
+  els:[new Audio(), new Audio()], hls:[null,null], active:0,
+  room:null, idx:0, state:"idle", // idle | connecting | playing | paused | failed
+  vol: store.get("vol", .8), muted: store.get("muted", false),
+  token:0, retries:0, failed:new Set(), timers:{}, note:""
+};
+engine.els.forEach(el=>{ el.preload="none"; el.setAttribute("playsinline",""); });
+
+function clearTimers(){ Object.values(engine.timers).forEach(clearTimeout); engine.timers={}; }
+function detach(i){
+  const el=engine.els[i];
+  el.onplaying=el.onerror=el.onwaiting=el.onstalled=el.onpause=null;
+  if(engine.hls[i]){ try{engine.hls[i].destroy();}catch(e){} engine.hls[i]=null; }
+  try{ el.pause(); }catch(e){}
+  el.removeAttribute("src"); try{ el.load(); }catch(e){}
+}
+function ramp(el, to, ms, done){
+  if(!CAN_VOL){ done&&done(); return; }
+  const from=el.volume, t0=performance.now();
+  (function step(t){
+    const k=Math.min(1,(t-t0)/ms), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    el.volume = Math.max(0,Math.min(1, from+(to-from)*e));
+    if(k<1) requestAnimationFrame(step); else done&&done();
+  })(t0);
+}
+const targetVol = () => engine.vol;
+
+async function start(room, idx=0, opts={}){
+  clearTimers();
+  const tok = ++engine.token;
+  const src = room.sources[idx];
+  const roomChanged = engine.room !== room;
+  if(roomChanged){ engine.failed = new Set(); }
+  engine.room = room; engine.idx = idx; engine.state = "connecting";
+  if(!opts.keepNote) engine.note = "";
+  if(!opts.retry) engine.retries = 0;
+  store.set("last", {id:room.id, idx});
+  ui();
+
+  const prev = engine.active, next = 1-prev;
+  detach(next);
+  const el = engine.els[next];
+  el.muted = engine.muted;
+  if(CAN_VOL) el.volume = 0;
+  const url = opts.retry ? src.url + (src.url.includes("?")?"&":"?") + "_r=" + Date.now() : src.url;
+
+  try{
+    if(src.hls && !NATIVE_HLS){
+      await loadHls();
+      if(tok!==engine.token) return;
+      if(window.Hls && Hls.isSupported()){
+        const hl = new Hls({lowLatencyMode:false, liveSyncDurationCount:3, manifestLoadingMaxRetry:2});
+        engine.hls[next]=hl;
+        hl.on(Hls.Events.ERROR,(e,d)=>{ if(d.fatal && tok===engine.token) fail(tok); });
+        hl.loadSource(src.url); hl.attachMedia(el);
+      } else el.src = url;
+    } else el.src = url;
+  }catch(e){ fail(tok); return; }
+
+  el.onplaying = () => {
+    if(tok!==engine.token) return;
+    clearTimeout(engine.timers.connect); clearTimeout(engine.timers.stall);
+    engine.state="playing"; engine.retries=0; ui();
+    if(engine.active!==next){
+      const old = engine.els[prev];
+      engine.active = next;
+      if(!old.paused && old.src){ ramp(old, 0, 1800, ()=>{ if(tok===engine.token) detach(prev); }); } else detach(prev);
+    }
+    ramp(el, targetVol(), 1800);
+  };
+  el.onwaiting = el.onstalled = () => {
+    if(tok!==engine.token || engine.state!=="playing") return;
+    clearTimeout(engine.timers.stall);
+    engine.timers.stall = setTimeout(()=>{ if(tok===engine.token) fail(tok, true); }, 12000);
+  };
+  el.onerror = () => { if(tok===engine.token) fail(tok); };
+
+  engine.timers.connect = setTimeout(()=>{ if(tok===engine.token && engine.state==="connecting") fail(tok); }, 16000);
+  const p = el.play();
+  if(p && p.catch) p.catch(err=>{
+    if(tok!==engine.token) return;
+    if(err && err.name==="NotAllowedError"){ engine.state="paused"; engine.note="Press play to begin."; clearTimers(); ui(); }
+    else if(err && err.name!=="AbortError") fail(tok);
+  });
+}
+
+function fail(tok, stalled){
+  if(tok!==engine.token) return;
+  const room=engine.room, src=room.sources[engine.idx];
+  clearTimers();
+  if(engine.retries < 1){
+    engine.retries++; engine.note = stalled ? "The signal dropped. Reconnecting…" : "Reconnecting…";
+    engine.state="connecting"; ui();
+    engine.timers.retry = setTimeout(()=>{ if(tok===engine.token) start(room, engine.idx, {retry:true, keepNote:true}); }, 1500);
+    return;
+  }
+  engine.failed.add(engine.idx);
+  const alt = room.sources.findIndex((s,i)=>!engine.failed.has(i));
+  if(alt>=0){
+    engine.note = `${src.name} isn't answering at the moment, so the room has switched to ${room.sources[alt].name}.`;
+    start(room, alt, {keepNote:true});
+  } else {
+    detach(engine.active); detach(1-engine.active);
+    engine.state="failed";
+    engine.note = room.sources.length>1
+      ? "Neither station for this room is answering right now. Try again shortly, or take a seat elsewhere."
+      : `${src.name} isn't answering right now. Try again shortly, or take a seat elsewhere.`;
+    ui();
+  }
+}
+
+function pause(){
+  clearTimers(); const tok=++engine.token;
+  const el=engine.els[engine.active];
+  const finish=()=>{ if(tok===engine.token){ detach(0); detach(1); } };
+  if(CAN_VOL && !el.paused) ramp(el,0,500,finish); else finish();
+  engine.state="paused"; engine.note=""; ui();
+}
+function toggle(){
+  if(!engine.room) { enter(featured); return; }
+  if(engine.state==="playing" || engine.state==="connecting") pause();
+  else { if(engine.state==="failed") engine.failed=new Set(); start(engine.room, engine.idx); }   // live radio: always rejoin at the live point
+}
+function setVol(v){
+  engine.vol=v; store.set("vol",v);
+  if(CAN_VOL && engine.state==="playing") engine.els[engine.active].volume=v;
+  $("#vol").style.setProperty("--v", (v*100)+"%");
+}
+function setMuted(m){
+  engine.muted=m; store.set("muted",m);
+  engine.els.forEach(el=>el.muted=m); ui();
+}
+function nextSource(){
+  const r=engine.room; if(!r || r.sources.length<2) return;
+  const i=(engine.idx+1)%r.sources.length;
+  engine.failed.delete(i);
+  start(r, i);
+}
+
+/* ---------- Player UI ---------- */
+const ICON = {
+  play:'<path d="M4 2l10 6-10 6z" fill="currentColor"/>',
+  pause:'<path d="M4 2h3v12H4zM9 2h3v12H9z" fill="currentColor"/>',
+  wait:'<circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-dasharray="4 3"><animateTransform attributeName="transform" type="rotate" from="0 8 8" to="360 8 8" dur="2.4s" repeatCount="indefinite"/></circle>',
+  vol:'<path d="M2 7h3l4-3v10l-4-3H2z" fill="none" stroke="currentColor"/><path d="M12 6.5a3.5 3.5 0 0 1 0 5M14 4.5a6.5 6.5 0 0 1 0 9" fill="none" stroke="currentColor"/>',
+  mute:'<path d="M2 7h3l4-3v10l-4-3H2z" fill="none" stroke="currentColor"/><path d="M12 7l4 4M16 7l-4 4" stroke="currentColor"/>'
+};
+function ui(){
+  const r=engine.room, st=engine.state;
+  const src = r ? r.sources[engine.idx] : null;
+  document.body.classList.toggle("playing", st==="playing");
+  $("#playBtn").disabled = false;
+  $("#playIcon").innerHTML = st==="playing" ? ICON.pause : st==="connecting" ? ICON.wait : ICON.play;
+  $("#playBtn").setAttribute("aria-label", st==="playing"||st==="connecting" ? "Pause" : "Play");
+  $("#muteIcon").innerHTML = engine.muted ? ICON.mute : ICON.vol;
+  $("#muteBtn").setAttribute("aria-label", engine.muted ? "Unmute" : "Mute");
+  if(r){
+    $("#npPlate").outerHTML = plate(r).replace('class="plate"','class="plate" id="npPlate"');
+    $("#npTitle").textContent = r.name + " · " + r.city;
+    const sub = $("#npSub");
+    sub.className = (st==="failed") ? "warn" : "";
+    sub.innerHTML = st==="playing" ? `<span class="eq"><i></i><i></i><i></i></span>${esc(src.name)} · ${esc(src.place)}`
+      : st==="connecting" ? (engine.note ? esc(engine.note) : "Finding you a seat… "+esc(src.name))
+      : st==="failed" ? "Unavailable · "+esc(src.name)
+      : st==="paused" ? (engine.note ? esc(engine.note) : "Paused · "+esc(src.name))
+      : esc(src.name);
+    $("#srcBtn").hidden = r.sources.length<2;
+  } else {
+    const last = store.get("last", null), lr = last && byId(last.id);
+    $("#npTitle").textContent = lr ? "Return to " + lr.name : "Choose a room";
+    $("#npSub").textContent = lr ? lr.city + " · " + lr.sources[0].name : "Nothing playing yet";
+  }
+  $("#live").textContent = st==="playing" && src ? "Now playing "+src.name : st==="failed" ? "Station unavailable" : "";
+  if(roomOpen) renderRoomSources();
+  mediaSession();
+}
+function mediaSession(){
+  if(!("mediaSession" in navigator) || !engine.room) return;
+  const r=engine.room, s=r.sources[engine.idx];
+  try{
+    navigator.mediaSession.metadata = new MediaMetadata({title:r.name+", "+r.city, artist:s.name, album:"Late Check-Out"});
+    navigator.mediaSession.playbackState = engine.state==="playing" ? "playing" : "paused";
+    navigator.mediaSession.setActionHandler("play", ()=>{ if(engine.state!=="playing") toggle(); });
+    navigator.mediaSession.setActionHandler("pause", ()=>{ if(engine.state==="playing") toggle(); });
+    navigator.mediaSession.setActionHandler("stop", ()=>pause());
+  }catch(e){}
+}
+
+/* ---------- Room view ---------- */
+let roomOpen=null, idleT=null, wakeLock=null, wantWake=false;
+function enter(r){
+  if(!r) return;
+  openRoom(r);
+  const same = engine.room===r && (engine.state==="playing"||engine.state==="connecting");
+  if(!same){
+    const last=store.get("last",null);
+    const idx = (last && last.id===r.id && r.sources[last.idx]) ? last.idx : 0;
+    start(r, engine.room===r ? engine.idx : idx);
+  }
+  refreshCards();
+}
+function openRoom(r){
+  roomOpen=r;
+  const el=$("#room");
+  $("#roomPlate").outerHTML = plate(r).replace('class="plate"','class="plate" id="roomPlate"');
+  el.style.setProperty("--b", r.b);
+  $("#roomWhere").textContent = `${typeName(r.type)} · ${r.city}, ${r.country}`;
+  $("#roomName").textContent = r.name;
+  $("#roomBlurb").textContent = r.blurb;
+  $("#roomMood").innerHTML = `${esc(r.mood)} &nbsp;·&nbsp; ${esc(statusText(r))}`;
+  tickRoom();
+  renderRoomSources();
+  el.classList.add("show"); el.setAttribute("aria-hidden","false");
+  document.documentElement.style.overflow="hidden";
+  location.hash = "room/"+r.id;
+  poke();
+}
+function closeRoom(){
+  roomOpen=null;
+  const el=$("#room"); el.classList.remove("show","ambient"); el.setAttribute("aria-hidden","true");
+  document.documentElement.style.overflow="";
+  if(location.hash.startsWith("#room/")) history.replaceState(null,"",location.pathname+location.search);
+  if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+  releaseWake();
+  refreshCards();
+}
+function tickRoom(){
+  if(!roomOpen) return;
+  const r=roomOpen;
+  $("#roomClock").textContent = hhmm(nowMin(r.tz));
+  const p=$("#roomPlate"); if(p) p.style.setProperty("--light", daylight(r.tz).toFixed(2));
+}
+function renderRoomSources(){
+  const r=roomOpen; if(!r) return;
+  const playingHere = engine.room===r;
+  let notice = "";
+  if(!isOpen(r)) notice = `The ${typeName(r.type).toLowerCase()} is closed for now and reopens at ${hhmm(r.hours[0])} local time. The music carries on, so you are welcome to stay.`;
+  if(playingHere && engine.note) notice = esc(engine.note) + (notice ? "<br><br>"+notice : "");
+  $("#roomNotice").innerHTML = notice;
+  $("#roomSources").innerHTML = `<div class="eyebrow">${r.sources.length>1?"Music · choose a station":"Music"}</div>` + r.sources.map((s,i)=>{
+    const on = playingHere && engine.idx===i;
+    const bad = playingHere && engine.failed.has(i);
+    const st = on ? ({playing:"Playing",connecting:"Connecting",paused:"Paused",failed:"Unavailable"}[engine.state]||"") : bad ? "Unavailable" : "";
+    return `<button class="src ${on?"on":""}" data-i="${i}"><span class="rad"></span>
+      <span class="n">${esc(s.name)}<small>${esc(s.place)} · <a href="${esc(s.home)}" target="_blank" rel="noopener">Station site</a></small></span>
+      <span class="s ${(bad||(on&&engine.state==="failed"))?"bad":""}">${st}</span></button>`;
+  }).join("");
+  $("#roomSources").querySelectorAll(".src").forEach(b=>b.onclick=(e)=>{
+    if(e.target.tagName==="A") return;
+    const i=+b.dataset.i;
+    if(engine.room===r && engine.idx===i && engine.state==="playing") return;
+    engine.failed.delete(i);
+    start(r,i);
+  });
+}
+function poke(){
+  const el=$("#room"); el.classList.remove("ambient");
+  clearTimeout(idleT);
+  idleT=setTimeout(()=>{ if(roomOpen) el.classList.add("ambient"); }, 25000);
+}
+async function acquireWake(){
+  try{ wakeLock = await navigator.wakeLock.request("screen"); $("#wakeBtn").style.color="var(--brass)";
+    wakeLock.addEventListener("release",()=>{ wakeLock=null; if(!wantWake) $("#wakeBtn").style.color=""; }); }catch(e){ wantWake=false; }
+}
+function toggleWake(){ if(wantWake) releaseWake(); else { wantWake=true; acquireWake(); } }
+function releaseWake(){ wantWake=false; $("#wakeBtn").style.color=""; if(wakeLock){ wakeLock.release().catch(()=>{}); wakeLock=null; } }
+function refreshCards(){ renderGrid(); renderDesk(); }
+
+/* ---------- Wiring ---------- */
+$("#playBtn").onclick = toggle;
+$("#muteBtn").onclick = ()=>setMuted(!engine.muted);
+$("#vol").value = Math.round(engine.vol*100); setVol(engine.vol);
+$("#vol").oninput = e=>setVol(e.target.value/100);
+$("#srcBtn").onclick = nextSource;
+$("#npOpen").onclick = ()=>{
+  if(engine.room) openRoom(engine.room);
+  else { const last=store.get("last",null), lr=last&&byId(last.id); if(lr) enter(lr); else location.hash="#rooms"; }
+};
+$("#featGo").onclick = ()=>enter(featured);
+$("#roomBack").onclick = closeRoom;
+$("#fsBtn").onclick = ()=>{ const d=document.documentElement; if(document.fullscreenElement) document.exitFullscreen(); else if(d.requestFullscreen) d.requestFullscreen().catch(()=>{}); };
+if("wakeLock" in navigator){ $("#wakeBtn").hidden=false; $("#wakeBtn").onclick=toggleWake; }
+if(!document.documentElement.requestFullscreen) $("#fsBtn").hidden=true;
+["mousemove","touchstart","keydown"].forEach(ev=>$("#room").addEventListener(ev,poke,{passive:true}));
+document.addEventListener("keydown",e=>{
+  if(e.target.tagName==="INPUT") return;
+  if(e.code==="Space"){ e.preventDefault(); toggle(); }
+  else if(e.key==="m"||e.key==="M") setMuted(!engine.muted);
+  else if(e.key==="Escape" && roomOpen) closeRoom();
+});
+window.addEventListener("hashchange",()=>{
+  const m=location.hash.match(/^#room\/(.+)$/);
+  if(m){ const r=byId(m[1]); if(r && roomOpen!==r) openRoom(r); }
+  else if(roomOpen) closeRoom();
+});
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"){ renderAll(); if(wantWake && !wakeLock && roomOpen) acquireWake(); } });
+
+function clockTick(){
+  $("#yourTime").textContent = new Intl.DateTimeFormat("en-GB",{hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date());
+  tickRoom();
+}
+let lastMinute=-1;
+setInterval(()=>{
+  clockTick();
+  const m=Math.floor(Date.now()/60000);
+  if(m!==lastMinute){ lastMinute=m; renderAll(); if(roomOpen) $("#roomMood").innerHTML=`${esc(roomOpen.mood)} &nbsp;·&nbsp; ${esc(statusText(roomOpen))}`; }
+}, 5000);
+
+renderTabs(); renderAll(); clockTick(); ui();
+/* Deep link: #room/<id> opens the room; playback starts on the first press, as browsers require */
+(()=>{ const m=location.hash.match(/^#room\/(.+)$/); const r=m&&byId(m[1]); if(r){ openRoom(r); engine.room=r; engine.state="paused"; engine.note="Press play to take your seat."; ui(); } })();
+</script>
+</body>
+</html>
